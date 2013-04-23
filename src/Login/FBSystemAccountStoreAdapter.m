@@ -204,14 +204,14 @@ static FBSystemAccountStoreAdapter *_singletonInstance = nil;
              // requestAccessToAccountsWithType:options:completion: completes on an
              // arbitrary thread; let's process this back on our main thread
              dispatch_async(dispatch_get_main_queue(), ^{
+                 ACAccount *account = nil;
                  NSError *accountStoreError = error;
                  NSString *oauthToken = nil;
                  if (granted) {
                      NSArray *fbAccounts = [self.accountStore accountsWithAccountType:self.accountTypeFB];
                      if (fbAccounts.count > 0) {
-                         id account = [fbAccounts objectAtIndex:0];
+                         account = [fbAccounts objectAtIndex:0];
                          id credential = [account credential];
-
                          oauthToken = [credential oauthToken];
                      }
                  }
@@ -223,7 +223,28 @@ static FBSystemAccountStoreAdapter *_singletonInstance = nil;
                                                                    errorCode:nil
                                                                   innerError:nil];
                  }
-                 handler(oauthToken, accountStoreError);
+                 
+                 if (!accountStoreError) {
+                     [self renewSystemAuthorization:^(ACAccountCredentialRenewResult result, NSError *error) {
+                         if (handler) {
+                             if (result == ACAccountCredentialRenewResultRenewed) {
+                                 ACAccount *renewedAccount = [self.accountStore accountWithIdentifier:account.identifier];
+                                 ACAccountCredential *credential = renewedAccount.credential;
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     handler(credential.oauthToken, nil);
+                                 });
+                             } else {
+                                 // Otherwise, invoke the caller's handler back on the main thread with an
+                                 // error that will trigger the password change user message.
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     handler(nil, [FBErrorUtility fberrorForSystemPasswordChange:error]);
+                                 });
+                             }
+                         }
+                     }];
+                 } else if (handler) {
+                     handler(oauthToken, accountStoreError);
+                 }
              });
          }];
     };
