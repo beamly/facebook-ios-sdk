@@ -20,7 +20,7 @@
 #import "FBLogger.h"
 #import "FBSettings.h"
 
-@interface FBViewController ()
+@interface FBViewController () <UINavigationBarDelegate>
 
 @property (nonatomic, retain) UINavigationBar *navigationBar;
 @property (nonatomic, retain) UIView *canvasView;
@@ -122,6 +122,16 @@
     [self updateBar];
 }
 
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    [self updateBar];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self updateBar];
+}
+
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
 
@@ -189,10 +199,11 @@
         // If we need a bar but don't have one, create it.
         if (self.navigationBar == nil) {
             self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
+            self.navigationBar.delegate = self;
             self.navigationBar.barStyle = UIBarStyleDefault;
-
+            
             [self.navigationBar setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-
+            
             [self.view addSubview:self.navigationBar];
         }
     } else {
@@ -297,5 +308,13 @@
     // Internal subclasses that will implicitly log app events will do so here.
 }
 
+#pragma mark - UIBarPositioningDelegate
+
+- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
+    if (bar == _navigationBar) {
+        return UIBarPositionTopAttached;
+    }
+    return UIBarPositionAny;
+}
 
 @end
