@@ -215,14 +215,6 @@ static FBSystemAccountStoreAdapter *_singletonInstance = nil;
                          oauthToken = [credential oauthToken];
                      }
                  }
-
-                 if (!accountStoreError && !oauthToken) {
-                     // This means iOS did not give an error nor granted. In order to
-                     // surface this to users, stuff in our own error that can be inspected.
-                     accountStoreError = [session errorLoginFailedWithReason:FBErrorLoginFailedReasonSystemDisallowedWithoutErrorValue
-                                                                   errorCode:nil
-                                                                  innerError:nil];
-                 }
                  
                  if (!accountStoreError) {
                      [self renewSystemAuthorization:^(ACAccountCredentialRenewResult result, NSError *error) {
