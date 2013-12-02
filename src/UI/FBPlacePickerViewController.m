@@ -33,8 +33,8 @@
 NSString *const FBPlacePickerCacheIdentity = @"FBPlacePicker";
 
 static const NSInteger searchTextChangedTimerInterval = 2;
-const NSInteger defaultResultsLimit = 100;
-const NSInteger defaultRadius = 1000; // 1km
+const NSInteger FBDefaultResultsLimit = 100;
+const NSInteger FBDefaultRadius = 1000; // 1km
 
 @interface FBPlacePickerViewController () <FBGraphObjectSelectionChangedDelegate,
 FBGraphObjectViewControllerDelegate,
@@ -123,8 +123,8 @@ FBGraphObjectPagingLoaderDelegate>
     self.delegate = nil;
     self.selectionManager = selectionManager;
     self.selectionManager.allowsMultipleSelection = NO;
-    self.resultsLimit = defaultResultsLimit;
-    self.radiusInMeters = defaultRadius;
+    self.resultsLimit = FBDefaultResultsLimit;
+    self.radiusInMeters = FBDefaultRadius;
     self.itemPicturesEnabled = YES;
     self.trackActiveSession = YES;
 }
