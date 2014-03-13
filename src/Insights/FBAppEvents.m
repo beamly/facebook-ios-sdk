@@ -967,7 +967,7 @@ const int MAX_IDENTIFIER_LENGTH                      = 40;
 
         FBSessionAppEventsState *appEventsState = session.appEventsState;
         @synchronized (appEventsState) {
-            appEventsState.numSkippedEventsDueToFullBuffer += [[persistedData objectForKey:FBAppEventsPersistKeyNumSkipped] integerValue];
+            appEventsState.numSkippedEventsDueToFullBuffer += [[persistedData objectForKey:FBAppEventsPersistKeyNumSkipped] intValue];
             NSArray *retrievedObjects = [persistedData objectForKey:FBAppEventsPersistKeyEvents];
             if (retrievedObjects.count) {
                 [appEventsState.inFlightEvents addObjectsFromArray:retrievedObjects];
