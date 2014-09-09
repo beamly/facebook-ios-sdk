@@ -35,6 +35,10 @@
 
 @implementation FBShareDialogParams
 
+- (NSString *)description {
+    return self.shareDescription;
+}
+
 - (void)dealloc
 {
     [_link release];
@@ -62,7 +66,7 @@
         [args setObject:self.caption forKey:@"caption"];
     }
     if (self.shareDescription) {
-        [args setObject:self.description forKey:@"description"];
+        [args setObject:self.shareDescription forKey:@"description"];
     }
     if (self.picture) {
         [args setObject:[self.picture absoluteString] forKey:@"picture"];
